@@ -5,7 +5,7 @@ ant test -Dtest=TestSimplePerfectUtil
 A Java Executor based implementation:
 ant test -Dtest=TestThreadPoolPerfectUtil
 
-An Akka based implementation:
+An Kilim based implementation:
 ant test -Dtest=TestActorsPerfectUtil
 
 A Spring Integration based implementation:

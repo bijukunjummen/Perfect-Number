@@ -16,8 +16,7 @@ public class ThreadPoolPerfectNumberUtil implements PerfectNumberUtil{
 	    int RANGE = Constants.RANGE;
 	    int numberOfPartitions = new Double(Math.ceil(aNumber * 1.0 / RANGE)).intValue();
 	    Future<Integer>[] sumOfFactors = new Future[numberOfPartitions];
-
-//	    ExecutorService pool = Executors.newFixedThreadPool(numberOfPartitions);
+	    
 	    for (int i=0;i<numberOfPartitions;i++) {
 	    	int lower = i * RANGE + 1;
 	    	int upper = (i+1)* RANGE;

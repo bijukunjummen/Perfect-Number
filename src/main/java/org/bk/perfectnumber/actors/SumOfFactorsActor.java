@@ -20,7 +20,6 @@ public class SumOfFactorsActor extends Task{
     public void execute() throws Pausable, Exception {
 		while (true) {			
 			   FactorsRange factorsRange = mailbox.get(); // blocks
-//			   System.out.println(factorsRange + " " + Thread.currentThread());
 				int sum=0;
 				for (int i=factorsRange.getLower();i<=factorsRange.getUpper();i++){
 					if (factorsRange.getAnumber()%i==0){
