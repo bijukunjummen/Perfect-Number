@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<project name="perfectnumber" default="package" basedir=".">
+
+
+	<!-- ====================================================================== -->
+	<!-- Build environment properties                                           -->
+	<!-- ====================================================================== -->
+
+	<property file="build.properties" />
+
+	<property name="build.finalName" value="perfectnumber-1.0-SNAPSHOT" />
+	<property name="build.dir" value="target" />
+	<property name="build.outputDir" value="${build.dir}/classes" />
+	<property name="build.srcDir.0" value="src/main/java" />
+	<property name="build.resourceDir.0" value="src/main/resources" />
+	<property name="build.testOutputDir" value="${build.dir}/test-classes" />
+	<property name="build.testDir.0" value="src/test/java" />
+	<property name="build.srcDir.scala.0" value="src/main/scala" />
+	<property name="build.testDir.scala.0" value="src/test/scala" />
+	<property name="build.testResourceDir.0" value="src/test/resources" />
+	<property name="build.test.reports" value="${build.dir}/test-reports" />
+	<property name="build.reporting.outputDirectory" value="${build.dir}/site" />
+
+
+	<taskdef resource="scala/tools/ant/antlib.xml">
+		<classpath>
+			<pathelement location="${lib}/scala-compiler-2.8.0.jar" />
+			<pathelement location="${lib}/scala-library-2.8.0.jar" />
+		</classpath>
+	</taskdef>
+
+	<!-- ====================================================================== -->
+	<!-- Defining classpaths                                                    -->
+	<!-- ====================================================================== -->
+
+	<path id="build.classpath">
+		<fileset dir="${lib}" includes="**/*.jar" />
+		<!--
+		<pathelement location="${lib}/scala-library-2.8.0.jar" />
+		<pathelement location="${lib}/jsr166y.jar" />
+		<pathelement location="${lib}/kilim.jar" />
+		<pathelement location="${lib}/asm-all-2.2.3.jar" />
+		-->
+	</path>
+	<path id="build.test.classpath">
+		<fileset dir="${lib}" includes="**/*.jar" />
+		<!--
+		<pathelement location="${lib}/scala-library-2.8.0.jar" />
+		<pathelement location="${lib}/junit-4.8.1.jar" />
+		<pathelement location="${lib}/jsr166y.jar" />
+	    <pathelement location="${lib}/kilim.jar" />
+	    <pathelement location="${lib}/asm-all-2.2.3.jar" />
+	    -->		
+	</path>
+
+	<!-- ====================================================================== -->
+	<!-- Cleaning up target                                                     -->
+	<!-- ====================================================================== -->
+
+	<target name="clean" description="Clean the output directory">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<!-- ====================================================================== -->
+	<!-- Compilation target                                                     -->
+	<!-- ====================================================================== -->
+
+	<target name="compile" depends="" description="Compile the code">
+		<mkdir dir="${build.outputDir}" />
+		<javac destdir="${build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true" target="1.5" verbose="false" fork="false" source="1.5">
+			<src>
+				<pathelement location="${build.srcDir.0}" />
+			</src>
+			<classpath refid="build.classpath" />
+		</javac>
+		<java classname="kilim.tools.Weaver" fork="yes">
+			<classpath>
+                <path refid="build.test.classpath" />
+                <pathelement location="${build.outputDir}" />				
+			</classpath>
+		     <assertions>
+		        <enable/>
+		     </assertions>
+			<arg value="-d" />
+			<arg value="${build.outputDir}" />
+			<arg line="${build.outputDir}" />
+		</java>
+		<scalac destdir="${build.outputDir}">
+			<src>
+				<pathelement location="${build.srcDir.scala.0}" />
+			</src>
+			<classpath refid="build.classpath" />
+		</scalac>
+	    <copy todir="${build.outputDir}">
+	      <fileset dir="${build.resourceDir.0}"/>
+	    </copy>
+
+	</target>
+
+	<!-- ====================================================================== -->
+	<!-- Test-compilation target                                                -->
+	<!-- ====================================================================== -->
+
+	<target name="compile-tests" depends="compile" description="Compile the test code" unless="build.test.skip">
+		<mkdir dir="${build.testOutputDir}" />
+		<javac destdir="${build.testOutputDir}" nowarn="false" debug="true" optimize="false" deprecation="true" target="1.6" verbose="false" fork="false" source="1.6">
+			<src>
+				<pathelement location="${build.testDir.0}" />
+			</src>
+			<classpath>
+				<path refid="build.test.classpath" />
+				<pathelement location="${build.outputDir}" />
+			</classpath>
+		</javac>
+		<scalac destdir="${build.testOutputDir}">
+			<src>
+				<pathelement location="${build.testDir.scala.0}" />
+			</src>
+			<classpath>
+				<path refid="build.test.classpath" />
+				<pathelement location="${build.outputDir}" />
+			</classpath>
+		</scalac>
+	    <copy todir="${build.testOutputDir}">
+	      <fileset dir="${build.testResourceDir.0}"/>
+	    </copy>
+
+	</target>
+
+	<!-- ====================================================================== -->
+	<!-- Run all tests                                                          -->
+	<!-- ====================================================================== -->
+
+	<target name="test" depends="compile-tests" unless="junit.skipped" description="Run the test cases">
+		<property name="excludes" value="**/*$*.class" />
+		<mkdir dir="${build.test.reports}" />
+		<junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+			<sysproperty key="basedir" value="." />
+			<formatter type="xml" />
+			<formatter type="plain" usefile="false" />
+			<classpath>
+				<path refid="build.test.classpath" />
+				<pathelement location="${build.outputDir}" />
+				<pathelement location="${build.testOutputDir}" />
+			</classpath>
+			<batchtest todir="${build.test.reports}" unless="test">
+				<fileset dir="${build.testOutputDir}">
+					<include name="**/Test*.class" />
+					<include name="**/*Test.class" />
+					<exclude name="${excludes}" />
+				</fileset>
+
+
+			</batchtest>
+			<batchtest todir="${build.test.reports}" if="test">
+				<fileset dir="${build.testOutputDir}">
+					<include name="**/${test}.class" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+
+	<!-- ====================================================================== -->
+	<!-- Javadoc target                                                         -->
+	<!-- ====================================================================== -->
+
+	<target name="javadoc" description="Generates the Javadoc of the application">
+		<javadoc sourcepath="${build.srcDir.0}" packagenames="*" destdir="${build.reporting.outputDirectory}/apidocs" access="protected" old="false" verbose="false" version="true" use="true" author="true" splitindex="false" nodeprecated="false" nodeprecatedlist="false" notree="false" noindex="false" nohelp="false" nonavbar="false" serialwarn="false" charset="ISO-8859-1" linksource="false" breakiterator="false" />
+	</target>
+
+
+	<target name="package" depends="compile,test" description="Package the application">
+		<jar jarfile="${build.dir}/${build.finalName}.jar" compress="true" index="false" basedir="${build.outputDir}" excludes="**/package.html" />
+	</target>
+
+	<target name="jar" depends="package" description="Builds the jar for the application" />
+
+
+</project>

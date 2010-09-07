@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/integration"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:stream="http://www.springframework.org/schema/integration/stream"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/integration
+            http://www.springframework.org/schema/integration/spring-integration.xsd
+            http://www.springframework.org/schema/integration/stream
+            http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd">
+
+	<channel id="tosplitter" />
+	<channel id="aggregate" />
+	<gateway id="sumOfFactorsGateway" service-interface="org.bk.perfectnumber.si.SumOfFactorsGateway"
+		default-request-channel="tosplitter" default-reply-channel="aggregate" />
+
+
+	<channel id="sumoffactors">
+		<queue capacity="100" />
+	</channel>
+	<splitter ref="rangeSplitter" method="split" input-channel="tosplitter"
+		output-channel="sumoffactors" />
+
+	<channel id="toaggregate">
+	   <queue capacity="100" />
+	</channel>
+	<service-activator input-channel="sumoffactors" ref="sumoffactorsBean"
+		method="sumFactors" output-channel="toaggregate" />
+	
+	<!-- 
+	<service-activator input-channel="sumoffactors" ref="sumoffactorsBean"
+        method="sumFactors" output-channel="toaggregate" />
+     -->
+	<aggregator input-channel="toaggregate" ref="sumaggregator"
+		method="aggregate" output-channel="aggregate" />
+
+	<beans:bean id="sumoffactorsBean" class="org.bk.perfectnumber.si.SumOfFactorsBean" />
+	<beans:bean id="rangeSplitter" class="org.bk.perfectnumber.si.RangeSplitter" />
+	<beans:bean id="sumaggregator" class="org.bk.perfectnumber.si.SumAggregator" />
+	<beans:bean id="perfectNumberUtil"
+		class="org.bk.perfectnumber.si.SIPerfectNumberUtil">
+		<beans:property name="sumOfFactorsGateway" ref="sumOfFactorsGateway" />
+	</beans:bean>
+
+	<poller id="poller" default="true">
+		<interval-trigger interval="1" />
+	</poller>
+
+</beans:beans>
