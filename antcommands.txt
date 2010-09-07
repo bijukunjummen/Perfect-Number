@@ -1,5 +1,0 @@
-ant test -Dtest=TestSimplePerfectUtil
-ant test -Dtest=TestThreadPoolPerfectUtil
-ant test -Dtest=TestActorsPerfectUtil
-ant test -Dtest=TestSIPerfectUtil
-ant test -Dtest=TestPerfectUtilScala

@@ -1,0 +1,15 @@
+The different tests can be executed using these ant commands:
+A simple Perfect Number implementation:
+ant test -Dtest=TestSimplePerfectUtil
+
+A Java Executor based implementation:
+ant test -Dtest=TestThreadPoolPerfectUtil
+
+An Akka based implementation:
+ant test -Dtest=TestActorsPerfectUtil
+
+A Spring Integration based implementation:
+ant test -Dtest=TestSIPerfectUtil
+
+A Scala Actor based implementation:
+ant test -Dtest=TestPerfectUtilScala
