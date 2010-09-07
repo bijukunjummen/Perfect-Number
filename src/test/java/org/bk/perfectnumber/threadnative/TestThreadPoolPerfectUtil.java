@@ -3,7 +3,6 @@ package org.bk.perfectnumber.threadnative;
 import static org.junit.Assert.*;
 
 import org.bk.perfectnumber.PerfectNumberUtil;
-import org.bk.perfectnumber.threadnative.ThreadPoolPerfectNumberUtil;
 import org.junit.Test;
 
 

@@ -1,4 +1,4 @@
-package com.seq.perfectnumber.actors
+package org.bk.perfectnumber.actors
 
 import scala.actors.Actor._
 import org.junit.Assert._
@@ -8,7 +8,7 @@ class TestPerfectUtilScala {
 
   val pUtil = new PerfectUtilScala
   @Test
-  def testAMoreInvolvedCase1() {
+  def testPerfectNumberScala() {
     assertEquals(1, countPerfectNumbersInRange(33550300, 33550400))
   }
 

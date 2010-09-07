@@ -3,7 +3,6 @@ package org.bk.perfectnumber.actors;
 import static org.junit.Assert.*;
 
 import org.bk.perfectnumber.PerfectNumberUtil;
-import org.bk.perfectnumber.actors.ActorsPerfectNumberUtil;
 import org.junit.Test;
 
 

@@ -2,7 +2,6 @@ package org.bk.perfectnumber.simple;
 
 import static org.junit.Assert.*;
 
-import org.bk.perfectnumber.simple.SimplePerfectNumberUtil;
 import org.junit.Test;
 
 public class TestSimplePerfectUtil {

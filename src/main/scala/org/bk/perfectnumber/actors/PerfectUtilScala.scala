@@ -1,4 +1,4 @@
-package com.seq.perfectnumber.actors
+package org.bk.perfectnumber.actors
 
 import scala.actors.Actor._
 
@@ -10,7 +10,7 @@ class PerfectUtilScala {
     val caller = self
     
     
-    val sumoffactorsActor1 = actor{
+    val sumoffactorsActor = actor{
     	loop {
     		react {
 				case msg:FactorsRangeForCandidate =>
@@ -19,20 +19,12 @@ class PerfectUtilScala {
 		}	
     }
 
-    val sumoffactorsActor2 = actor{
-    	loop {
-    		react {
-				case msg:FactorsRangeForCandidate =>
-					caller ! sumOfFactorsInRange(msg.lower, msg.upper, msg.candidate)
-			}		
-		}	
-    }
-    val sumArr = List(sumoffactorsActor1, sumoffactorsActor2)
+
     for (i <- 0 until numberOfPartitions) {
       val lower = i * RANGE + 1;
       val upper = candidate min (i + 1) * RANGE
       
-      sumArr(i%2) ! new FactorsRangeForCandidate(lower, upper, candidate)
+      sumoffactorsActor ! new FactorsRangeForCandidate(lower, upper, candidate)
     }
 
     val sum = (0 /: (0 until numberOfPartitions)) { (partialSum, i) =>

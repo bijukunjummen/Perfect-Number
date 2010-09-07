@@ -20,7 +20,7 @@ public class TestSIPerfectUtil {
 
 	
 	@Test
-	public void testPerfectNumberSimple(){
+	public void testPerfectNumberSpringIntegration(){
 		assertEquals(1, countPerfectNumbersInRange(33550300, 33550400));
 	}
 	
