@@ -2,12 +2,15 @@
 <beans:beans xmlns="http://www.springframework.org/schema/integration"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:stream="http://www.springframework.org/schema/integration/stream"
+	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans.xsd
             http://www.springframework.org/schema/integration
             http://www.springframework.org/schema/integration/spring-integration.xsd
             http://www.springframework.org/schema/integration/stream
-            http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd">
+            http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd
+			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+			">
 
 	<channel id="tosplitter" />
 	<channel id="aggregate" />
@@ -25,12 +28,12 @@
 	   <queue capacity="100" />
 	</channel>
 	<service-activator input-channel="sumoffactors" ref="sumoffactorsBean"
-		method="sumFactors" output-channel="toaggregate" />
+		method="sumFactors" output-channel="toaggregate">
+	     <poller  task-executor="taskExecutorPool" >
+         	<interval-trigger interval="1"/>
+         </poller>	 		
+	</service-activator>
 	
-	<!-- 
-	<service-activator input-channel="sumoffactors" ref="sumoffactorsBean"
-        method="sumFactors" output-channel="toaggregate" />
-     -->
 	<aggregator input-channel="toaggregate" ref="sumaggregator"
 		method="aggregate" output-channel="aggregate" />
 
@@ -45,5 +48,7 @@
 	<poller id="poller" default="true">
 		<interval-trigger interval="1" />
 	</poller>
+	
+	<task:executor id="taskExecutorPool" pool-size="3" />
 
 </beans:beans>
